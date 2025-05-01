@@ -160,7 +160,6 @@
             width: 300%;
             height: 100%;
             background: #7494ec;
-            /* border: 2px solid red; */
             border-radius: 150px;
             z-index: 2;
             transition: 1.8s ease-in-out;
@@ -174,7 +173,6 @@
             position: absolute;
             width: 50%;
             height: 100%;
-            /* background: seagreen; */
             color: #fff;
             display: flex;
             flex-direction: column;
@@ -216,7 +214,6 @@
             box-shadow: none;
         }
 
-        /* Menu de contact */
         .contact-menu {
             position: fixed;
             top: 20px;
@@ -351,7 +348,6 @@
             }
         }
 
-        /* -- External Social Link CSS Styles -- */
         #source-link {
             top: 120px;
         }
@@ -414,7 +410,6 @@
 </head>
 
 <body>
-    <!-- Menu de contact -->
     <div class="contact-menu">
         <div class="contact-btn">
             <i class="fas fa-envelope"></i>
@@ -536,7 +531,6 @@
             container.classList.remove('active');
         })
 
-        // Gestion du menu de contact
         const contactMenu = document.querySelector('.contact-menu');
         const contactBtn = document.querySelector('.contact-btn');
 
@@ -544,7 +538,6 @@
             contactMenu.classList.toggle('active');
         });
 
-        // Fermer le menu quand on clique ailleurs
         document.addEventListener('click', (e) => {
             if (!contactMenu.contains(e.target)) {
                 contactMenu.classList.remove('active');
