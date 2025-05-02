@@ -8,10 +8,9 @@
     <title>Connexion/Création de compte by Begy02300</title>
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    
-    <!-- Ajout du SDK Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
@@ -412,7 +411,6 @@
             transition: color 600ms;
         }
 
-        /* Style pour les messages d'erreur */
         .error-message {
             color: #ff4444;
             font-size: 14px;
@@ -427,6 +425,39 @@
             margin-top: -20px;
             margin-bottom: 20px;
             text-align: center;
+        }
+
+        .animate__animated {
+            animation-duration: 0.5s;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translate3d(0, -20px, 0);
+            }
+            to {
+                opacity: 1;
+                transform: translate3d(0, 0, 0);
+            }
+        }
+
+        .animate__fadeInDown {
+            animation-name: fadeInDown;
+        }
+
+        @keyframes fadeOutUp {
+            from {
+                opacity: 1;
+            }
+            to {
+                opacity: 0;
+                transform: translate3d(0, -20px, 0);
+            }
+        }
+
+        .animate__fadeOutUp {
+            animation-name: fadeOutUp;
         }
     </style>
 </head>
@@ -544,7 +575,6 @@
     <script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="BEGY02300" data-description="Support me on Buy me a coffee!" data-message="Merci beaucoup et sa va m'aider" data-color="#5F7FFF" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
 
     <script>
-        // Configuration Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyDdTysDQLSXnJMGtU8mRXs6yayND2HaroI",
             authDomain: "authentication-pour-le-site.firebaseapp.com",
@@ -555,167 +585,266 @@
             measurementId: "G-JF7HWKLT66"
         };
 
-        // Initialisation Firebase
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-
-        // Gestion de l'interface
-        const container = document.querySelector('.container');
-        const registerBtn = document.querySelector('.register-btn');
-        const loginBtn = document.querySelector('.login-btn');
-
-        registerBtn.addEventListener('click', () => {
-            container.classList.add('active');
-        });
-
-        loginBtn.addEventListener('click', () => {
-            container.classList.remove('active');
-        });
-
-        // Gestion du menu contact
-        const contactMenu = document.querySelector('.contact-menu');
-        const contactBtn = document.querySelector('.contact-btn');
-
-        contactBtn.addEventListener('click', () => {
-            contactMenu.classList.toggle('active');
-        });
-
-        document.addEventListener('click', (e) => {
-            if (!contactMenu.contains(e.target)) {
-                contactMenu.classList.remove('active');
-            }
-        });
-
-        // Fonction pour afficher les messages d'erreur
-        function showError(elementId, message) {
-            const errorElement = document.getElementById(elementId);
-            errorElement.textContent = message;
-            errorElement.style.display = 'block';
+        if (typeof window !== 'undefined' && 
+            (window.location.protocol === 'http:' || 
+             window.location.protocol === 'https:')) {
             
-            // Masquer le message après 5 secondes
-            setTimeout(() => {
-                errorElement.style.display = 'none';
-            }, 5000);
-        }
+            try {
+                firebase.initializeApp(firebaseConfig);
+                const auth = firebase.auth();
 
-        // Fonction pour afficher les messages de succès
-        function showSuccess(elementId, message) {
-            const successElement = document.getElementById(elementId);
-            successElement.textContent = message;
-            successElement.style.display = 'block';
-            
-            // Masquer le message après 5 secondes
-            setTimeout(() => {
-                successElement.style.display = 'none';
-            }, 5000);
-        }
+                const container = document.querySelector('.container');
+                const registerBtn = document.querySelector('.register-btn');
+                const loginBtn = document.querySelector('.login-btn');
 
-        // Connexion avec email/mot de passe
-        document.getElementById('loginForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
-            
-            auth.signInWithEmailAndPassword(email, password)
-                .then((userCredential) => {
-                    // Connexion réussie
-                    const user = userCredential.user;
-                    console.log("Utilisateur connecté:", user);
-                    // Redirection ou autre action après connexion
-                    showSuccess('loginError', 'Connexion réussie!');
-                })
-                .catch((error) => {
-                    showError('loginError', error.message);
+                registerBtn.addEventListener('click', () => {
+                    container.classList.add('active');
                 });
-        });
 
-        // Inscription avec email/mot de passe
-        document.getElementById('registerForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            
-            const email = document.getElementById('registerEmail').value;
-            const password = document.getElementById('registerPassword').value;
-            const displayName = document.getElementById('registerName').value;
-            
-            auth.createUserWithEmailAndPassword(email, password)
-                .then((userCredential) => {
-                    // Inscription réussie
-                    const user = userCredential.user;
-                    
-                    // Mise à jour du nom d'affichage
-                    return user.updateProfile({
-                        displayName: displayName
-                    });
-                })
-                .then(() => {
-                    showSuccess('registerSuccess', 'Inscription réussie! Bienvenue ' + displayName);
-                    document.getElementById('registerForm').reset();
+                loginBtn.addEventListener('click', () => {
                     container.classList.remove('active');
-                })
-                .catch((error) => {
-                    showError('registerError', error.message);
                 });
-        });
 
-        // Réinitialisation du mot de passe
-        document.getElementById('resetPasswordLink').addEventListener('click', (e) => {
-            e.preventDefault();
-            
-            const email = document.getElementById('loginEmail').value;
-            
-            if (!email) {
-                showError('loginError', 'Veuillez entrer votre email pour réinitialiser le mot de passe.');
-                return;
+                const contactMenu = document.querySelector('.contact-menu');
+                const contactBtn = document.querySelector('.contact-btn');
+
+                contactBtn.addEventListener('click', () => {
+                    contactMenu.classList.toggle('active');
+                });
+
+                document.addEventListener('click', (e) => {
+                    if (!contactMenu.contains(e.target)) {
+                        contactMenu.classList.remove('active');
+                    }
+                });
+
+                document.getElementById('loginForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    
+                    const email = document.getElementById('loginEmail').value;
+                    const password = document.getElementById('loginPassword').value;
+                    
+                    auth.signInWithEmailAndPassword(email, password)
+                        .then((userCredential) => {
+                            Swal.fire({
+                                title: 'Connexion réussie!',
+                                html: `
+                                    <div style="text-align:center;">
+                                        <p>Bienvenue <strong>${userCredential.user.email}</strong> !</p>
+                                        <div style="margin-top:20px;">
+                                            <i class="bx bxs-check-circle" style="font-size:48px;color:#7494ec;"></i>
+                                        </div>
+                                    </div>
+                                `,
+                                icon: 'success',
+                                confirmButtonText: 'Continuer',
+                                confirmButtonColor: '#7494ec',
+                                background: '#fff',
+                                backdrop: `
+                                    rgba(116,148,236,0.4)
+                                    center top
+                                    no-repeat
+                                `,
+                                showClass: {
+                                    popup: 'animate__animated animate__fadeInDown'
+                                },
+                                hideClass: {
+                                    popup: 'animate__animated animate__fadeOutUp'
+                                }
+                            }).then(() => {
+                                // Redirection ou autre action après clic sur OK
+                                // window.location.href = "tableau-de-bord.html";
+                            });
+                        })
+                        .catch((error) => {
+                            Swal.fire({
+                                title: 'Erreur',
+                                text: error.message,
+                                icon: 'error',
+                                confirmButtonText: 'OK',
+                                confirmButtonColor: '#ff4444'
+                            });
+                        });
+                });
+
+                document.getElementById('registerForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    
+                    const email = document.getElementById('registerEmail').value;
+                    const password = document.getElementById('registerPassword').value;
+                    const displayName = document.getElementById('registerName').value;
+                    
+                    auth.createUserWithEmailAndPassword(email, password)
+                        .then((userCredential) => {
+                            return userCredential.user.updateProfile({
+                                displayName: displayName
+                            }).then(() => {
+                                Swal.fire({
+                                    title: 'Inscription réussie!',
+                                    html: `
+                                        <div style="text-align:center;">
+                                            <p>Bienvenue <strong>${displayName}</strong> !</p>
+                                            <p>Un email de vérification a été envoyé à ${email}</p>
+                                            <div style="margin-top:20px;">
+                                                <i class="bx bxs-party" style="font-size:48px;color:#7494ec;"></i>
+                                            </div>
+                                        </div>
+                                    `,
+                                    icon: 'success',
+                                    confirmButtonText: 'Super!',
+                                    confirmButtonColor: '#7494ec',
+                                    showClass: {
+                                        popup: 'animate__animated animate__fadeInDown'
+                                    },
+                                    hideClass: {
+                                        popup: 'animate__animated animate__fadeOutUp'
+                                    }
+                                });
+                                
+                                return userCredential.user.sendEmailVerification();
+                            });
+                        })
+                        .then(() => {
+                            container.classList.remove('active');
+                            document.getElementById('registerForm').reset();
+                        })
+                        .catch((error) => {
+                            Swal.fire({
+                                title: 'Erreur',
+                                text: error.message,
+                                icon: 'error',
+                                confirmButtonText: 'OK',
+                                confirmButtonColor: '#ff4444'
+                            });
+                        });
+                });
+
+                document.getElementById('resetPasswordLink').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const email = document.getElementById('loginEmail').value;
+                    
+                    Swal.fire({
+                        title: 'Réinitialisation du mot de passe',
+                        input: 'email',
+                        inputLabel: 'Votre email',
+                        inputValue: email || '',
+                        inputPlaceholder: 'Entrez votre email',
+                        showCancelButton: true,
+                        confirmButtonColor: '#7494ec',
+                        cancelButtonColor: '#ff4444',
+                        confirmButtonText: 'Envoyer',
+                        cancelButtonText: 'Annuler'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            auth.sendPasswordResetEmail(result.value)
+                                .then(() => {
+                                    Swal.fire({
+                                        title: 'Email envoyé!',
+                                        html: `
+                                            <div style="text-align:center;">
+                                                <p>Consultez votre boîte mail pour le lien de réinitialisation</p>
+                                                <div style="margin-top:20px;">
+                                                    <i class="bx bxs-envelope" style="font-size:48px;color:#7494ec;"></i>
+                                                </div>
+                                            </div>
+                                        `,
+                                        icon: 'success',
+                                        confirmButtonColor: '#7494ec'
+                                    });
+                                })
+                                .catch((error) => {
+                                    Swal.fire({
+                                        title: 'Erreur',
+                                        text: error.message,
+                                        icon: 'error',
+                                        confirmButtonColor: '#ff4444'
+                                    });
+                                });
+                        }
+                    });
+                });
+
+                function signInWithGoogle() {
+                    const provider = new firebase.auth.GoogleAuthProvider();
+                    
+                    auth.signInWithPopup(provider)
+                        .then((result) => {
+                            Swal.fire({
+                                title: 'Connexion Google réussie!',
+                                html: `
+                                    <div style="text-align:center;">
+                                        <p>Bienvenue ${result.user.displayName} !</p>
+                                        <div style="margin-top:20px;">
+                                            <i class="bx bxl-google" style="font-size:48px;color:#EA4335;"></i>
+                                        </div>
+                                    </div>
+                                `,
+                                icon: 'success',
+                                confirmButtonText: 'Continuer',
+                                confirmButtonColor: '#7494ec'
+                            });
+                        })
+                        .catch((error) => {
+                            Swal.fire({
+                                title: 'Erreur',
+                                text: error.message,
+                                icon: 'error',
+                                confirmButtonColor: '#ff4444'
+                            });
+                        });
+                }
+
+                document.getElementById('googleLogin').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    signInWithGoogle();
+                });
+
+                document.getElementById('googleRegister').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    signInWithGoogle();
+                });
+
+                auth.onAuthStateChanged((user) => {
+                    if (user) {
+                        console.log("Utilisateur actuel:", user);
+                        // Vous pouvez rediriger vers une autre page ou mettre à jour l'UI ici
+                    } else {
+                        console.log("Aucun utilisateur connecté");
+                    }
+                });
+
+            } catch (error) {
+                console.error("Erreur Firebase:", error);
+                Swal.fire({
+                    title: 'Erreur',
+                    text: "Une erreur est survenue lors de l'initialisation. Veuillez rafraîchir la page.",
+                    icon: 'error',
+                    confirmButtonColor: '#ff4444'
+                });
             }
-            
-            auth.sendPasswordResetEmail(email)
-                .then(() => {
-                    showSuccess('loginError', 'Email de réinitialisation envoyé! Vérifiez votre boîte mail.');
-                })
-                .catch((error) => {
-                    showError('loginError', error.message);
+        } else {
+            const errorMsg = "Cette application doit être exécutée sur un serveur web (http/https).";
+            console.error(errorMsg);
+            document.getElementById('loginForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                Swal.fire({
+                    title: 'Fonctionnalité désactivée',
+                    text: errorMsg,
+                    icon: 'warning',
+                    confirmButtonColor: '#7494ec'
                 });
-        });
-
-        // Connexion avec Google
-        function signInWithGoogle() {
-            const provider = new firebase.auth.GoogleAuthProvider();
+            });
             
-            auth.signInWithPopup(provider)
-                .then((result) => {
-                    // Connexion réussie
-                    const user = result.user;
-                    console.log("Utilisateur Google connecté:", user);
-                    showSuccess('loginError', 'Connexion avec Google réussie!');
-                })
-                .catch((error) => {
-                    showError('loginError', error.message);
+            document.getElementById('registerForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                Swal.fire({
+                    title: 'Fonctionnalité désactivée',
+                    text: errorMsg,
+                    icon: 'warning',
+                    confirmButtonColor: '#7494ec'
                 });
+            });
         }
-
-        // Ajout des écouteurs pour les boutons Google
-        document.getElementById('googleLogin').addEventListener('click', (e) => {
-            e.preventDefault();
-            signInWithGoogle();
-        });
-
-        document.getElementById('googleRegister').addEventListener('click', (e) => {
-            e.preventDefault();
-            signInWithGoogle();
-        });
-
-        // Écouteur pour les changements d'état d'authentification
-        auth.onAuthStateChanged((user) => {
-            if (user) {
-                // Utilisateur connecté
-                console.log("Utilisateur actuel:", user);
-                // Vous pouvez rediriger vers une autre page ou mettre à jour l'UI ici
-            } else {
-                // Utilisateur déconnecté
-                console.log("Aucun utilisateur connecté");
-            }
-        });
     </script>
 </body>
 
