@@ -8,6 +8,8 @@
     <title>Connexion/Création de compte by Begy02300</title>
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    
+    <!-- Ajout du SDK Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -411,6 +413,7 @@
             transition: color 600ms;
         }
 
+        /* Style pour les messages d'erreur */
         .error-message {
             color: #ff4444;
             font-size: 14px;
@@ -575,6 +578,7 @@
     <script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="BEGY02300" data-description="Support me on Buy me a coffee!" data-message="Merci beaucoup et sa va m'aider" data-color="#5F7FFF" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
 
     <script>
+        // Configuration Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyDdTysDQLSXnJMGtU8mRXs6yayND2HaroI",
             authDomain: "authentication-pour-le-site.firebaseapp.com",
@@ -585,14 +589,17 @@
             measurementId: "G-JF7HWKLT66"
         };
 
+        // Vérification de l'environnement avant d'initialiser Firebase
         if (typeof window !== 'undefined' && 
             (window.location.protocol === 'http:' || 
              window.location.protocol === 'https:')) {
             
             try {
+                // Initialisation Firebase
                 firebase.initializeApp(firebaseConfig);
                 const auth = firebase.auth();
 
+                // Gestion de l'interface
                 const container = document.querySelector('.container');
                 const registerBtn = document.querySelector('.register-btn');
                 const loginBtn = document.querySelector('.login-btn');
@@ -605,6 +612,7 @@
                     container.classList.remove('active');
                 });
 
+                // Gestion du menu contact
                 const contactMenu = document.querySelector('.contact-menu');
                 const contactBtn = document.querySelector('.contact-btn');
 
@@ -618,6 +626,7 @@
                     }
                 });
 
+                // Connexion avec email/mot de passe
                 document.getElementById('loginForm').addEventListener('submit', (e) => {
                     e.preventDefault();
                     
@@ -626,6 +635,7 @@
                     
                     auth.signInWithEmailAndPassword(email, password)
                         .then((userCredential) => {
+                            // Message de succès stylé
                             Swal.fire({
                                 title: 'Connexion réussie!',
                                 html: `
@@ -667,6 +677,7 @@
                         });
                 });
 
+                // Inscription avec email/mot de passe
                 document.getElementById('registerForm').addEventListener('submit', (e) => {
                     e.preventDefault();
                     
@@ -701,6 +712,7 @@
                                     }
                                 });
                                 
+                                // Envoyer l'email de vérification
                                 return userCredential.user.sendEmailVerification();
                             });
                         })
@@ -719,6 +731,7 @@
                         });
                 });
 
+                // Réinitialisation du mot de passe
                 document.getElementById('resetPasswordLink').addEventListener('click', (e) => {
                     e.preventDefault();
                     const email = document.getElementById('loginEmail').value;
@@ -764,11 +777,13 @@
                     });
                 });
 
+                // Connexion avec Google
                 function signInWithGoogle() {
                     const provider = new firebase.auth.GoogleAuthProvider();
                     
                     auth.signInWithPopup(provider)
                         .then((result) => {
+                            // Connexion réussie
                             Swal.fire({
                                 title: 'Connexion Google réussie!',
                                 html: `
@@ -794,6 +809,7 @@
                         });
                 }
 
+                // Ajout des écouteurs pour les boutons Google
                 document.getElementById('googleLogin').addEventListener('click', (e) => {
                     e.preventDefault();
                     signInWithGoogle();
@@ -804,11 +820,13 @@
                     signInWithGoogle();
                 });
 
+                // Écouteur pour les changements d'état d'authentification
                 auth.onAuthStateChanged((user) => {
                     if (user) {
+                        // Utilisateur connecté
                         console.log("Utilisateur actuel:", user);
                         // Vous pouvez rediriger vers une autre page ou mettre à jour l'UI ici
-                    } else {
+                    } else
                         console.log("Aucun utilisateur connecté");
                     }
                 });
@@ -845,7 +863,34 @@
                 });
             });
         }
+    document.getElementById("authForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      const status = document.getElementById("status");
+
+      auth.signInWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+          status.textContent = "Connecté avec succès !";
+        })
+        .catch((error) => {
+          if (error.code === "auth/user-not-found") {
+            auth.createUserWithEmailAndPassword(email, password)
+              .then((userCredential) => {
+                status.textContent = "Compte créé et connecté !";
+              })
+              .catch((error) => {
+                status.textContent = "Erreur de création : " + error.message;
+              });
+          } else {
+            status.textContent = "Erreur : " + error.message;
+          }
+        });
+    });
     </script>
+</body>
+
+</html>
 </body>
 
 </html>
