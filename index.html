@@ -675,12 +675,12 @@
             
             auth.signInWithEmailAndPassword(email, password)
                 .then((userCredential) => {
-                    showSuccessAlert(`Bienvenue ${userCredential.user.email} !`, 'Connexion réussie');
+                    // Redirection après connexion réussie
+                    window.location.href = "compte.html";
                 })
                 .catch((error) => {
-                    // Message personnalisé pour "user-not-found"
                     if (error.code === 'auth/user-not-found') {
-                        showErrorAlert('Compte inexistant', 'Erreur de connexion');
+                        showErrorAlert("Compte non existant", "Ce compte n'existe pas. Veuillez créer un compte.");
                     } else {
                         showErrorAlert(getErrorMessage(error.code));
                     }
@@ -708,6 +708,9 @@
                     showSuccessAlert(`Un email de vérification a été envoyé à ${email}`, 'Compte créé avec succès');
                     registerForm.reset();
                     authContainer.classList.remove('active');
+                    
+                    // Redirection après création de compte
+                    window.location.href = "compte.html";
                 })
                 .catch((error) => {
                     showErrorAlert(getErrorMessage(error.code));
@@ -720,7 +723,8 @@
             
             auth.signInWithPopup(provider)
                 .then((result) => {
-                    showSuccessAlert(`Bienvenue ${result.user.displayName} !`, 'Connexion Google réussie');
+                    // Redirection après connexion réussie
+                    window.location.href = "compte.html";
                 })
                 .catch((error) => {
                     showErrorAlert(getErrorMessage(error.code));
@@ -730,11 +734,12 @@
         googleLoginBtn.addEventListener('click', signInWithGoogle);
         googleRegisterBtn.addEventListener('click', signInWithGoogle);
 
-        // Connexion anonyme
+        // Connexion anonyme (pas de redirection)
         function signInAnonymously() {
             auth.signInAnonymously()
                 .then(() => {
                     showSuccessAlert('Vous êtes connecté anonymement', 'Connexion réussie');
+                    // Pas de redirection pour les utilisateurs anonymes
                 })
                 .catch((error) => {
                     showErrorAlert(getErrorMessage(error.code));
@@ -767,7 +772,11 @@
                             showSuccessAlert('Consultez votre boîte mail pour le lien de réinitialisation', 'Email envoyé');
                         })
                         .catch((error) => {
-                            showErrorAlert(getErrorMessage(error.code));
+                            if (error.code === 'auth/user-not-found') {
+                                showErrorAlert("Compte non existant", "Aucun compte trouvé avec cet email.");
+                            } else {
+                                showErrorAlert(getErrorMessage(error.code));
+                            }
                         });
                 }
             });
@@ -894,16 +903,16 @@
                         authContainer.classList.add('active');
                         showSuccessAlert('Complétez votre profil pour finaliser la création de compte');
                     } else {
-                        showSuccessAlert('Connexion par téléphone réussie !');
+                        // Redirection après connexion réussie
+                        window.location.href = "compte.html";
                     }
                     
                     phoneAuthModal.style.display = 'none';
                     resetPhoneAuth();
                 })
                 .catch((error) => {
-                    // Message personnalisé pour "user-not-found"
                     if (error.code === 'auth/user-not-found') {
-                        showErrorAlert('Compte inexistant', 'Erreur de connexion');
+                        showErrorAlert("Compte non existant", "Ce numéro n'est associé à aucun compte.");
                     } else {
                         showErrorAlert(getErrorMessage(error.code));
                     }
@@ -946,11 +955,12 @@
 
         // Écouteur d'état d'authentification
         auth.onAuthStateChanged((user) => {
-            if (user) {
+            if (user && !user.isAnonymous) {
                 console.log('Utilisateur connecté:', user);
-                // Redirection ou mise à jour de l'UI ici
+                // Redirection automatique si déjà connecté (sauf anonyme)
+                window.location.href = "compte.html";
             } else {
-                console.log('Utilisateur déconnecté');
+                console.log('Utilisateur déconnecté ou anonyme');
             }
         });
 
@@ -977,7 +987,7 @@
             const messages = {
                 'auth/invalid-email': 'Email invalide',
                 'auth/user-disabled': 'Ce compte a été désactivé',
-                'auth/user-not-found': 'Compte inexistant',
+                'auth/user-not-found': 'Compte non existant',
                 'auth/wrong-password': 'Mot de passe incorrect',
                 'auth/email-already-in-use': 'Cet email est déjà utilisé',
                 'auth/operation-not-allowed': 'Cette opération n\'est pas autorisée',
